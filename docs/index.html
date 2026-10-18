@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Face ID AI</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app">
+    <header class="header">
+      <h1>Face ID AI</h1>
+      <p class="subtitle">Aradığınız kişiyi Türkçe tarif edin, en benzer yüzü bulalım.</p>
+    </header>
+
+    <form id="search-form" class="search" autocomplete="off">
+      <textarea id="query" rows="2" maxlength="300"
+        placeholder="Örn: esmer, sakallı, gözlüklü orta yaşlı adam" required></textarea>
+      <button id="search-btn" type="submit">Ara</button>
+    </form>
+
+    <p id="status" class="status" role="status" aria-live="polite"></p>
+
+    <section id="result" class="result" hidden>
+      <figure class="best">
+        <img id="best-img" alt="En yakın eşleşme">
+        <figcaption>
+          <span id="best-person" class="person"></span>
+          <span id="best-score" class="score"></span>
+        </figcaption>
+      </figure>
+      <p class="clip-query">CLIP sorgusu: <em id="clip-query"></em></p>
+      <div id="others" class="others"></div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
