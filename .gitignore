@@ -4,3 +4,4 @@ __pycache__/
 data/
 qdrant_data/
 index.log
+server.log
