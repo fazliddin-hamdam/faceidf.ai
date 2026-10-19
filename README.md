@@ -52,14 +52,24 @@ python process_faces.py --download
 
 ## 3. Backend'i çalıştırma (Görev 2)
 
+Paketler `.venv` içinde kurulu olduğu için önce sanal ortamı etkinleştirin, sonra çalıştırın:
+
 ```bash
-uvicorn main:app --host 0.0.0.0 --port 8000
+.venv\Scriptsctivate
 ```
+
+```bash
+python main.py
+```
+
+Backend `http://127.0.0.1:8010` adresinde açılır (port `.env` → `PORT` ile değiştirilebilir).
+
+> `ModuleNotFoundError: No module named 'fastapi'` hatası alırsanız `.venv` etkin değildir; satır başında `(.venv)` yazısını görmelisiniz.
 
 Test:
 
 ```bash
-curl -X POST http://localhost:8000/search -H "Content-Type: application/json" -d "{\"text\": \"esmer, sakallı\", \"top_k\": 3}"
+curl -X POST http://localhost:8010/search -H "Content-Type: application/json" -d "{\"text\": \"esmer, sakallı\", \"top_k\": 3}"
 ```
 
 Örnek yanıt:
@@ -70,7 +80,7 @@ curl -X POST http://localhost:8000/search -H "Content-Type: application/json" -d
   "clip_query": "a photo of a dark haired, bearded man",
   "results": [
     {
-      "image_url": "http://localhost:8000/images/Some_Person/Some_Person_0001.jpg",
+      "image_url": "http://localhost:8010/images/Some_Person/Some_Person_0001.jpg",
       "path": "Some_Person/Some_Person_0001.jpg",
       "person": "Some Person",
       "score": 0.3121,
@@ -87,7 +97,7 @@ curl -X POST http://localhost:8000/search -H "Content-Type: application/json" -d
 Telegram Mini App ve GitHub Pages HTTPS olduğu için backend de **HTTPS** olmalıdır (aksi halde tarayıcı isteği engeller). En kolay yol Cloudflare Tunnel:
 
 ```bash
-cloudflared tunnel --url http://localhost:8000
+cloudflared tunnel --url http://localhost:8010
 ```
 
 Çıktıdaki `https://xxxx.trycloudflare.com` adresini not edin ve:
