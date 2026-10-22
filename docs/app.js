@@ -1,6 +1,6 @@
 // Backend (FastAPI) adresi. Tünel/sunucu adresiniz değişince burayı güncelleyin.
 // Test için sayfa URL'sine ?api=https://... eklenerek de geçici olarak değiştirilebilir.
-const DEFAULT_API_URL = "https://meetup-seekers-klein-plastic.trycloudflare.com";
+const DEFAULT_API_URL = "https://therapist-controller-impaired-reached.trycloudflare.com";
 const API_URL = (new URLSearchParams(location.search).get("api") || DEFAULT_API_URL).replace(/\/+$/, "");
 
 const tg = window.Telegram?.WebApp;

@@ -100,10 +100,9 @@ Telegram Mini App ve GitHub Pages HTTPS olduğu için backend de **HTTPS** olmal
 cloudflared tunnel --url http://localhost:8010
 ```
 
-Çıktıdaki `https://xxxx.trycloudflare.com` adresini not edin ve:
+Çıktıdaki `https://xxxx.trycloudflare.com` adresini `docs/app.js` → `DEFAULT_API_URL` değerine yazıp GitHub'a gönderin (commit + push).
 
-1. `.env` → `PUBLIC_BASE_URL=https://xxxx.trycloudflare.com` (görsel linkleri bu adresle üretilir), backend'i yeniden başlatın.
-2. `docs/app.js` → `DEFAULT_API_URL` değerini aynı adresle değiştirin.
+> `.env` → `PUBLIC_BASE_URL` boş bırakılabilir: backend, tünelden gelen istek başlıklarından doğru `https://` adresini kendisi üretir. Yalnızca farklı bir proxy/sunucu arkasında görsel linkleri yanlış çıkarsa doldurun.
 
 > Hızlı tünel adresi her başlatmada değişir. Kalıcı kullanım için bir sunucu (VPS, Render, Railway vb.) veya isimli Cloudflare tüneli kullanın.
 
@@ -142,7 +141,7 @@ cloudflared tunnel --url http://localhost:8010
 | Belirti | Çözüm |
 |---|---|
 | "Sunucuya ulaşılamadı" | Backend ve tünel çalışıyor mu? `app.js` adresi doğru mu? `ALLOWED_ORIGINS` GitHub Pages adresini içeriyor mu? |
-| Görseller yüklenmiyor | `PUBLIC_BASE_URL` tünel adresine ayarlı mı? `https://.../health` açılıyor mu? |
+| Görseller yüklenmiyor | `https://.../health` açılıyor mu? `PUBLIC_BASE_URL` doluysa güncel tünel adresi mi (değilse boş bırakın)? |
 | `401 Telegram doğrulaması başarısız` | Mini App'i Telegram içinden açın; `TELEGRAM_BOT_TOKEN` doğru botun token'ı mı? |
 | `429 Çeviri servisi yoğun` | Gemini ücretsiz katman limiti doldu; biraz bekleyin veya AI Studio'da faturalandırmayı açın. |
 | `502 Çeviri servisi hatası (400/403)` | `GEMINI_API_KEY` eksik veya hatalı. |
