@@ -17,13 +17,10 @@ import uuid
 from pathlib import Path
 
 from dotenv import load_dotenv
-from PIL import Image
 from qdrant_client import QdrantClient
 from qdrant_client.models import Distance, PointStruct, VectorParams
-from sentence_transformers import SentenceTransformer
-from tqdm import tqdm
 
-load_dotenv()
+load_dotenv(Path(__file__).resolve().parent / ".env")
 
 MODEL_NAME = "clip-ViT-B-32"
 VECTOR_SIZE = 512
@@ -35,6 +32,8 @@ LFW_ARCHIVE_NAME = "lfw-funneled.tgz"
 
 
 def download_lfw(data_root: Path) -> None:
+    from tqdm import tqdm
+
     data_root.mkdir(parents=True, exist_ok=True)
     archive = data_root / LFW_ARCHIVE_NAME
 
@@ -73,6 +72,10 @@ def ensure_collection(client: QdrantClient, name: str, recreate: bool) -> None:
 
 
 def main() -> None:
+    from PIL import Image
+    from sentence_transformers import SentenceTransformer
+    from tqdm import tqdm
+
     parser = argparse.ArgumentParser(description="LFW -> CLIP -> Qdrant")
     parser.add_argument("--lfw-dir", default=os.getenv("LFW_DIR", "data/lfw_funneled"))
     parser.add_argument("--qdrant-path", default=os.getenv("QDRANT_PATH", "qdrant_data"))

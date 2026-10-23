@@ -1,7 +1,8 @@
-// Backend (FastAPI) adresi. Tünel/sunucu adresiniz değişince burayı güncelleyin.
-// Test için sayfa URL'sine ?api=https://... eklenerek de geçici olarak değiştirilebilir.
-const DEFAULT_API_URL = "https://therapist-controller-impaired-reached.trycloudflare.com";
-const API_URL = (new URLSearchParams(location.search).get("api") || DEFAULT_API_URL).replace(/\/+$/, "");
+// Backend (FastAPI) adresi. Tünel/sunucu adresi değişince yalnızca bu satırı güncelleyin.
+// Güvenlik: adres yalnızca burada tanımlıdır; URL parametresiyle değiştirilemez.
+// ÖNEMLİ: Aşağıdaki örnek adresi kendi sabit tünel/sunucu adresinizle değiştirin.
+const API_URL = "https://desktop-3uoihfs.tailf0da6a.ts.net".replace(/\/+$/, "");
+const API_CONFIGURED = /^https:\/\//.test(API_URL) && !API_URL.includes("SIZIN-");
 
 const tg = window.Telegram?.WebApp;
 const form = document.getElementById("search-form");
@@ -26,6 +27,10 @@ function setLoading(loading) {
   button.textContent = loading ? "Aranıyor..." : "Ara";
 }
 
+if (!API_CONFIGURED) {
+  setStatus("API adresi ayarlanmadı: docs/app.js içindeki API_URL satırına sabit tünel adresinizi yazın.", true);
+}
+
 function renderResults(data) {
   const [best, ...others] = data.results;
   if (!best) {
@@ -36,7 +41,7 @@ function renderResults(data) {
 
   document.getElementById("best-img").src = best.image_url;
   document.getElementById("best-person").textContent = best.person;
-  document.getElementById("best-score").textContent = `%${best.similarity_percent}`;
+  document.getElementById("best-score").textContent = `${best.score.toFixed(2)} benzerlik`;
   document.getElementById("clip-query").textContent = data.clip_query;
 
   const othersEl = document.getElementById("others");
@@ -50,7 +55,7 @@ function renderResults(data) {
       const cap = document.createElement("figcaption");
       const name = document.createElement("b");
       name.textContent = r.person;
-      cap.append(name, `%${r.similarity_percent}`);
+      cap.append(name, r.score.toFixed(2));
       fig.append(img, cap);
       return fig;
     })
@@ -68,6 +73,7 @@ async function search(text) {
       "X-Telegram-Init-Data": tg?.initData || "",
     },
     body: JSON.stringify({ text, top_k: 4 }),
+    signal: AbortSignal.timeout ? AbortSignal.timeout(30000) : undefined,
   });
   const data = await response.json().catch(() => ({}));
   if (!response.ok) {
@@ -79,6 +85,11 @@ async function search(text) {
 
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
+  if (!API_CONFIGURED) {
+    setStatus("API adresi ayarlanmadı: docs/app.js içindeki API_URL satırına sabit tünel adresinizi yazın.", true);
+    return;
+  }
+
   const text = input.value.trim();
   if (text.length < 2) {
     setStatus("Lütfen birkaç kelimeyle tarif edin.", true);
@@ -93,7 +104,13 @@ form.addEventListener("submit", async (event) => {
     tg?.HapticFeedback?.notificationOccurred("success");
   } catch (err) {
     resultEl.hidden = true;
-    setStatus(err instanceof TypeError ? "Sunucuya ulaşılamadı. Backend çalışıyor mu?" : err.message, true);
+    const message =
+      err instanceof TypeError
+        ? "Sunucuya ulaşılamadı. Backend çalışıyor mu?"
+        : err.name === "AbortError" || err.name === "TimeoutError"
+          ? "Sunucu 30 saniye içinde yanıt vermedi. Tekrar deneyin."
+          : err.message;
+    setStatus(message, true);
     tg?.HapticFeedback?.notificationOccurred("error");
   } finally {
     setLoading(false);
